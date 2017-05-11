@@ -16,6 +16,8 @@ public:
 	static void PrintOSStoreType();
 
 	static void IntroDaytimeTcpsrv1();
+
+	static int SockfdToFamily(int sockfd);
 };
 
 #endif /* UTILS_H_ */

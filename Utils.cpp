@@ -7,8 +7,14 @@
 
 #include "Utils.h"
 
+#include <config.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <time.h>
 #include "unp.h"
+#include <cstdio>
+#include <cstring>
 
 Utils::Utils() {
 	// TODO Auto-generated constructor stub
@@ -47,26 +53,36 @@ void Utils::IntroDaytimeTcpsrv1(){
 	char buff[MAXLINE];
 	time_t ticks;
 
-	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(13);
 
-	Bind(listenfd, (SA*)&servaddr, sizeof(servaddr));
+	bind(listenfd, (SA*)&servaddr, sizeof(servaddr));
 
-	Listen(listenfd, LISTENQ);
+	listen(listenfd, LISTENQ);
 
 	for(;;){
 		len = sizeof(cliaddr);
-		connfd = Accept(listenfd, (SA*)&cliaddr, &len);
+		connfd = accept(listenfd, (SA*)&cliaddr, &len);
 		printf("connection from %s, port %d\n",
-				Inet_ntop(AF_INET, &cliaddr.sin_addr, buff, sizeof(buff)),
+				inet_ntop(AF_INET, &cliaddr.sin_addr, buff, sizeof(buff)),
 				ntohs(cliaddr.sin_port));
 		ticks = time(NULL);
 		snprintf(buff, sizeof(buff), "%s.24s\r\n", ctime(&ticks));
-		Write(connfd, buff, strlen(buff));
+		write(connfd, buff, strlen(buff));
 
-		Close(connfd);
+		close(connfd);
 	}
+}
+
+int Utils::SockfdToFamily(int sockfd){
+	struct sockaddr_storage ss;
+	socklen_t len;
+
+	len = sizeof(ss);
+	if(getsockname(sockfd, (SA*)&ss, &len)<0)
+		return -1;
+	return ss.ss_family;
 }
