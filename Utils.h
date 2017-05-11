@@ -14,6 +14,8 @@ public:
 	virtual ~Utils();
 
 	static void PrintOSStoreType();
+
+	static void IntroDaytimeTcpsrv1();
 };
 
 #endif /* UTILS_H_ */

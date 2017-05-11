@@ -8,7 +8,8 @@
 #include "Utils.h"
 
 int main(int argc, char **argv){
-	Utils::PrintOSStoreType();
+//	Utils::PrintOSStoreType();
+	Utils::IntroDaytimeTcpsrv1();
 	return 0;
 }
 
